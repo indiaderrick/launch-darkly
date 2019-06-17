@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>LaunchDarkly solutions engineer test</title>
+    <script src="app.js" type="text/javascript"></script>
+    <script src="https://unpkg.com/launchdarkly-js-client-sdk@2"></script>
+  </head>
+  <body>
+    <div>
+      <h1>Practice environment for feature flags:</h1>
+      <p id="intro"> Since there is nothing below when the page loads, this is indicative that the feature flag is off.</p>
+    </div>
+
+    <script type="text/javascript">
+
+      const user = {
+        firstName: 'India',
+        lastName: 'Derrick',
+        key: 'bbg60ceb',
+        email: 'indiaderrick@gmail.com',
+        custom: {
+          groups: 'beta_testing'
+        }
+      };
+
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+  div.style.backgroundColor = 'lightblue';
+  div.style.padding = '20px';
+  div.style.margin = '20px';
+
+  div.appendChild(document.createTextNode('Initializing page, please wait...'));
+
+  const launchDarklyClient = LDClient.initialize('5d06ddd7517bc00765d01cd0', user);
+
+  function showFeature(){
+    const label = `Feature flag 'blue-box' is on for ${user.key} in group ${user.custom.groups}. This is currently the content of my Feature Flag, but whole features could be turned on here instead.`
+    div.replaceChild(document.createTextNode(label), div.firstChild);
+    document.getElementById('intro').style.display = 'none';
+  }
+
+  function hideFeature(){
+    document.body.removeChild(div);
+  }
+
+  function render() {
+    const shouldShow = launchDarklyClient.variation('blue-box', false);
+    var label = (shouldShow ? showFeature() : hideFeature());
+  }
+
+
+  launchDarklyClient.on('ready', render);
+  launchDarklyClient.on('change', render);
+
+    </script>
+  </body>
+</html>
